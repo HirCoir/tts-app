@@ -4,7 +4,6 @@ import random
 import re
 import string
 import subprocess
-import time
 import base64
 import sqlite3
 from flask import Flask, render_template, request, jsonify, after_this_request, send_from_directory
@@ -16,13 +15,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 app = Flask(__name__)
 
-# Define el directorio donde se guardan los archivos
+# Configuración de directorios
 file_folder = '/home/app'
 temp_audio_folder = os.path.join(file_folder, 'temp_audio')
 model_folder = os.path.join(file_folder, 'models')
 piper_binary_path = os.path.join(file_folder, 'piper', 'piper')
 
-# Crea la carpeta temp_audio si no existe
+# Crear carpetas necesarias
 os.makedirs(temp_audio_folder, exist_ok=True)
 
 # Define los nombres asignados a modelos específicos, en caso de no existir no se muestran
@@ -136,9 +135,11 @@ model_names = {
         "replacements": [('(', ','), (')', ','), ('?', ','), ('¿', ','), (':', ','), ('\n', ' ')]
     }
 }
-# Comprueba si los modelos definidos existen en la carpeta de modelos
-existing_models = [model_name for model_name in model_names.keys() if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
+# Modelos existentes
+existing_models = [model_name for model_name in model_names.keys()
+                   if os.path.isfile(os.path.join(model_folder, model_names[model_name]["model_path"]))]
 
+# Funciones auxiliares
 def multiple_replace(text, replacements):
     for old, new in replacements:
         text = text.replace(old, new)
@@ -193,6 +194,7 @@ def init_db():
 
 init_db()
 
+# Decoradores
 def rate_limit(limit, period):
     def decorator(func):
         @wraps(func)
@@ -227,13 +229,13 @@ def restrict_access(func):
             return "Acceso no autorizado", 403
     return wrapper
 
+# Rutas de la aplicación
 @app.route('/')
 def index():
     domain_url = request.url_root
     model_options = existing_models
     logging.info("Contents of current folder: %s", os.listdir(file_folder))
     return render_template('index.html', model_options=model_options, domain_url=domain_url)
-
 
 @app.route('/og-image.jpg')
 def og_image():
