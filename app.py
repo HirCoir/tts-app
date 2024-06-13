@@ -35,6 +35,10 @@ model_names = {
         "model_path": "es_MX-Veritasium-high.onnx",
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
     },
+        "Español México | Un Peso de Salsa": {
+        "model_path": "es_MX-1PesoDeSalsa-high.onnx",
+        "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
+    },
     "Español México | Lucasmelor": {
         "model_path": "es_MX_Lucasmelor-high.onnx",
         "replacements": [('\n', ' . '), ('*', ''), (')', ',')]
